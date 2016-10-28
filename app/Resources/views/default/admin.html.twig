@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h1>Admin Panel</h1>
+            {{ grid.render }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet"
+          href="{{ asset('assets/vendor/mesour/mesour.grid.min.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('assets/vendor/mesour/jquery.ui.js') }}"></script>
+    <script src="{{ asset('assets/vendor/mesour/mesour.grid.min.js') }}"></script>
+{% endblock %}

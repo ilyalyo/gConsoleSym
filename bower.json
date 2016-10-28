@@ -1,0 +1,22 @@
+{
+  "name": "googleConsoleSym",
+  "authors": [
+    "ilia <ilya4041@yandex.ru>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "web/assets/vendor/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "jquery": "^2.2.4"
+  }
+}

@@ -1,0 +1,10 @@
+services:
+    app.registration_listener:
+        class: AppBundle\EventListener\RegistrationListener
+        arguments:
+            router: '@router'
+            mailer: '@mailer'
+            mailer_email: '%mailer_user%'
+            mailer_reciever: '%mailer_receiver%'
+        tags:
+            - { name: kernel.event_subscriber }
