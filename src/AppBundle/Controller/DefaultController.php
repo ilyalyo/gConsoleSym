@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utils\GoogleUtils;
 use Google_Client;
+use Google_Service_Oauth2;
+use Google_Service_Webmasters;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Swift_Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -64,6 +66,20 @@ class DefaultController extends Controller
     public function gRedirectAction(Request $request)
     {
         $code = $request->get('code');
+        $client = new Google_Client();
+        $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+        $oauthService = new Google_Service_Oauth2($client);
+        echo $token;
+        echo $oauthService->userinfo->get()->getId();
+
+        $service = new Google_Service_Webmasters($client);
+
+        $websites = [];
+
+        foreach ($service->sites->listSites()->getSiteEntry() as $siteEntry)
+            $websites [] = $siteEntry['siteUrl'];
+        print_r($websites);
+
         return new Response($code);
     }
 
@@ -74,7 +90,6 @@ class DefaultController extends Controller
      */
     public function mailAction(Request $request)
     {
-        $code = $request->get('code');
         $message = Swift_Message::newInstance()
             ->setSubject('New registration')
             ->setFrom($this->getParameter('mailer_receiver'))
