@@ -77,8 +77,8 @@ class DefaultController extends Controller
         $code = $request->get('code');
         $message = Swift_Message::newInstance()
             ->setSubject('New registration')
-            ->setFrom($this->getParameter('mailer_user'))
-            ->setTo($this->getParameter('mailer_user'))
+            ->setFrom($this->getParameter('mailer_receiver'))
+            ->setTo($this->getParameter('mailer_receiver'))
             ->setBody(
                 "New user registered.",
                 'text/html'
