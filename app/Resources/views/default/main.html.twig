@@ -5,7 +5,9 @@
     <div class="row">
     <h1>Main</h1>
         {% if is_granted('ROLE_INVITED') %}
-            <h1>Invited</h1>
+            {% if authUrl %}
+                <a href="{{ authUrl }}">connect google account</a>
+            {% endif %}
         {% endif %}
     </div>
 </div>

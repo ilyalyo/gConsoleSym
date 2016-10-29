@@ -2,13 +2,19 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Utils\GoogleUtils;
+use Google_Client;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Mesour;
 use AppBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 class DefaultController extends Controller
 {
     /**
@@ -17,22 +23,49 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         // replace this example code with whatever you need
-        return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
-        ]);
-    }  
-    
+        return $this->render('default/index.html.twig');
+    }
+
     /**
      * @Route("/main", name="main")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function mainAction(Request $request)
     {
+
+        if (!$oauth_credentials = GoogleUtils::getOAuthCredentialsFile()){
+            echo "missing oauth file";
+            die();
+        }
+        else{
+            $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $client = new Google_Client();
+            $client->setAuthConfig($oauth_credentials);
+            $client->setRedirectUri($redirect_uri);
+            $client->addScope("https://www.googleapis.com/auth/webmasters");
+            $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+
+            $authUrl = $client->createAuthUrl();
+        }
+
         // replace this example code with whatever you need
-        return $this->render('default/main.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
+        return $this->render('default/main.html.twig',[
+            'authUrl' => $authUrl,
         ]);
     }
-    
+
+    /**
+     * @Route("/google_redirect", name="google_redirect")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function gRedirectAction(Request $request)
+    {
+        $code = $request->get('code');
+        return new Response($code);
+    }
+
     /**
      * @Route("/admin", name="admin")
      * @Security("has_role('ROLE_ADMIN')")
@@ -53,7 +86,7 @@ class DefaultController extends Controller
 
         $grid = new Mesour\UI\DataGrid('basicDataGrid', $application);
         $grid->setSource($source);
-        $grid->enablePager(5);
+        $grid->enablePager(10);
         $selection = $grid->enableRowSelection();
         $links = $selection->getLinks();
         $links->addLink('Enable')
@@ -73,7 +106,8 @@ class DefaultController extends Controller
                     }
                 }
             }
-            return new JsonResponse(array('id' => 15));
+            $url = $this->generateUrl('admin');
+            return new RedirectResponse($url);
         };
         $links->addLink('Delete')
       //      ->setConfirm('Really delete all selected users?')
