@@ -6,8 +6,10 @@
     <h1>Main</h1>
         {% if is_granted('ROLE_INVITED') %}
             {% if authUrl %}
-                <a href="{{ authUrl }}">connect google account</a>
+                <a href="{{ authUrl }}">Connect google account</a>
             {% endif %}
+        {% else %}
+            <p>You a not approved by admin yet.</p>
         {% endif %}
     </div>
 </div>

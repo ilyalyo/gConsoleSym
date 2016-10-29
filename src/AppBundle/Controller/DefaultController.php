@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Utils\GoogleUtils;
 use Google_Client;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Swift_Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -64,6 +65,26 @@ class DefaultController extends Controller
     {
         $code = $request->get('code');
         return new Response($code);
+    }
+
+    /**
+     * @Route("/check_mail", name="check_mail")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function mailAction(Request $request)
+    {
+        $code = $request->get('code');
+        $message = Swift_Message::newInstance()
+            ->setSubject('New registration')
+            ->setFrom($this->getParameter('mailer_user'))
+            ->setTo($this->getParameter('mailer_user'))
+            ->setBody(
+                "New user registered.",
+                'text/html'
+            );
+        $this->get('mailer')->send($message);
+        return new Response($message);
     }
 
     /**
