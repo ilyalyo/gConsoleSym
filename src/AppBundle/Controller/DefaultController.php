@@ -36,23 +36,11 @@ class DefaultController extends Controller
      */
     public function mainAction(Request $request)
     {
+        $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $client = GoogleUtils::getGoogleClient($redirect_uri);
 
-        if (!$oauth_credentials = GoogleUtils::getOAuthCredentialsFile()){
-            echo "missing oauth file";
-            die();
-        }
-        else{
-            $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
-            $client = new Google_Client();
-            $client->setAuthConfig($oauth_credentials);
-            $client->setRedirectUri($redirect_uri);
-            $client->addScope("https://www.googleapis.com/auth/webmasters");
-            $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+        $authUrl = $client->createAuthUrl();
 
-            $authUrl = $client->createAuthUrl();
-        }
-
-        // replace this example code with whatever you need
         return $this->render('default/main.html.twig',[
             'authUrl' => $authUrl,
         ]);
@@ -66,11 +54,13 @@ class DefaultController extends Controller
     public function gRedirectAction(Request $request)
     {
         $code = $request->get('code');
-        $client = new Google_Client();
-        $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+        $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $client = GoogleUtils::getGoogleClient($redirect_uri);
+
+        $token = $client->fetchAccessTokenWithAuthCode($code);
         $oauthService = new Google_Service_Oauth2($client);
-        echo $token;
-        echo $oauthService->userinfo->get()->getId();
+        var_dump($token);
+        var_dump($oauthService->userinfo->get()->getId());
 
         $service = new Google_Service_Webmasters($client);
 
