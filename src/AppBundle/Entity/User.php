@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Role\Role;
  */
 class User extends BaseUser
 {
-    const ROLE_INVITED = 'ROLE_INVITED';
+    const ROLE_APPROVED = 'ROLE_APPROVED';
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -24,7 +24,7 @@ class User extends BaseUser
             'id' => $this->id,
             'email' => $this->email,
             'username' => $this->username,
-            'hasRole' => $this->hasRole(self::ROLE_INVITED) ? 'yes' : 'no',
+            'hasRole' => $this->hasRole(self::ROLE_APPROVED) ? 'yes' : 'no',
         ];
     }
 }

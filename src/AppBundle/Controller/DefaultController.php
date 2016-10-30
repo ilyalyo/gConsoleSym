@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Client;
 use AppBundle\Utils\GoogleUtils;
 use Google_Client;
 use Google_Service_Oauth2;
@@ -54,23 +55,24 @@ class DefaultController extends Controller
     public function gRedirectAction(Request $request)
     {
         $code = $request->get('code');
+        $em = $this->getDoctrine()->getEntityManager();
         $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $client = GoogleUtils::getGoogleClient($redirect_uri);
+        $googleClient = GoogleUtils::getGoogleClient($redirect_uri);      
+        
+        $token = $googleClient->fetchAccessTokenWithAuthCode($code);
+        $oauthService = new Google_Service_Oauth2($googleClient);
+        $gId = $oauthService->userinfo->get()->getId();
+        $gEmail = $oauthService->userinfo->get()->getEmail();
 
-        $token = $client->fetchAccessTokenWithAuthCode($code);
-        $oauthService = new Google_Service_Oauth2($client);
-        var_dump($token);
-        var_dump($oauthService->userinfo->get()->getId());
+        $client = new Client();
+        $client->setGoogleId($gId);
+        $client->setEmail($gEmail);
+        $client->setToken($token);
 
-        $service = new Google_Service_Webmasters($client);
+        GoogleUtils::updateData($googleClient, $em, $client);
 
-        $websites = [];
-
-        foreach ($service->sites->listSites()->getSiteEntry() as $siteEntry)
-            $websites [] = $siteEntry['siteUrl'];
-        print_r($websites);
-
-        return new Response($code);
+        $url = $this->generateUrl('main');
+        return new RedirectResponse($url);
     }
 
     /**
@@ -127,7 +129,7 @@ class DefaultController extends Controller
                 if($isChecked == "true") {
                     $user = $repository->find($id);
                     if($user != null){
-                        $user->addRole(User::ROLE_INVITED);
+                        $user->addRole(User::ROLE_APPROVED);
                         $userManager->updateUser($user);
                     }
                 }
