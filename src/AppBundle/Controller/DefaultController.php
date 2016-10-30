@@ -71,13 +71,13 @@ class DefaultController extends Controller
             $client = new Client();
             $client->setGoogleId($gId);
             $client->setEmail($gEmail);
-            $client->setToken($token);
             $client->setPicture($gPicture);
             $client->setUser($this->getUser());
-            $em->persist($client);
-            $em->flush();
         }
-
+        
+        $client->setToken($token);
+        $em->persist($client);
+        $em->flush();
         GoogleUtils::updateData($googleClient, $em, $client);
 
         return new RedirectResponse($this->generateUrl('main'));

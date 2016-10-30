@@ -31,7 +31,7 @@ class Client
     /** @ORM\Column(type="string") */
     protected $picture;
 
-    /** @ORM\Column(type="array") */
+    /** @ORM\Column(type="string") */
     protected $token;
 
     /**
@@ -125,7 +125,7 @@ class Client
      */
     public function setToken($token)
     {
-        $this->token = $token;
+        $this->token = json_encode($token);
 
         return $this;
     }
@@ -137,7 +137,7 @@ class Client
      */
     public function getToken()
     {
-        return $this->token;
+        return json_decode($this->token);
     }
 
     /**
