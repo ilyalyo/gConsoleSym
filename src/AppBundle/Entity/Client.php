@@ -28,7 +28,7 @@ class Client
     /** @ORM\Column(type="string") */
     protected $email;
 
-    /** @ORM\Column(type="string") */
+    /** @ORM\Column(type="array") */
     protected $token;
 
     /**
@@ -116,7 +116,7 @@ class Client
     /**
      * Set token
      *
-     * @param string $token
+     * @param array $token
      *
      * @return Client
      */
@@ -130,7 +130,7 @@ class Client
     /**
      * Get token
      *
-     * @return string
+     * @return array
      */
     public function getToken()
     {
