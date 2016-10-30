@@ -17,7 +17,7 @@ class Record
     
     /**
      * @ORM\ManyToOne(targetEntity="Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $website;
 
