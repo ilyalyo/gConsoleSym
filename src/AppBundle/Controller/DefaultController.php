@@ -8,6 +8,7 @@ use AppBundle\Utils\GridUtils;
 use Google_Client;
 use Google_Service_Oauth2;
 use Google_Service_Webmasters;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Swift_Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -125,70 +126,66 @@ class DefaultController extends Controller
      */
     public function adminAction(Request $request)
     {
-        $repository = $this->getDoctrine()
-            ->getRepository('AppBundle:User');
-        $qb = $repository->createQueryBuilder ('u')
-            ->where('u.roles != :roles')
-            ->setParameter('roles', 'a:1:{i:0;s:10:"ROLE_ADMIN";}');
-
         $application = new Mesour\UI\Application;
         $application->setRequest($_REQUEST);
         $application->run();
 
-        $source = new Mesour\DataGrid\Sources\DoctrineGridSource(User::class , 'id', $qb);
-
         $grid = new Mesour\UI\DataGrid('basicDataGrid', $application);
-        $grid->setSource($source);
         $grid->enablePager(10);
+
         $selection = $grid->enableRowSelection();
         $links = $selection->getLinks();
         $links->addLink('Enable')
             ->setAjax(false)
             ->onCall[] = function () {
-
-            $userManager = $this->get('fos_user.user_manager');
-            $repository = $this->getDoctrine()
-                ->getRepository('AppBundle:User');
-            $ids = func_get_args()[0];
-            foreach ($ids as $id => $isChecked){
-                if($isChecked == "true") {
-                    $user = $repository->find($id);
-                    if($user != null){
-                        $user->addRole(User::ROLE_APPROVED);
-                        $userManager->updateUser($user);
-                    }
-                }
-            }
-            $url = $this->generateUrl('admin');
-            return new RedirectResponse($url);
+            $this->approveUser(true, func_get_args()[0]);
         };
-        $links->addLink('Delete')
-      //      ->setConfirm('Really delete all selected users?')
+        $links->addLink('Disable')
+            ->setAjax(false)
             ->onCall[] = function () {
-            $userManager = $this->get('fos_user.user_manager');
-            $repository = $this->getDoctrine()
-                ->getRepository('AppBundle:User');
-            $ids = func_get_args()[0];
-
-            foreach ($ids as $id => $isChecked){
-                if($isChecked == "true") {
-                    $user = $repository->find($id);
-                    $userManager->deleteUser($user);
-                }
-            }
-            return new JsonResponse(array('id' => 15));
+            $this->approveUser(false, func_get_args()[0]);
         };
+
+        $repository = $this->getDoctrine()
+            ->getRepository('AppBundle:User');
+        /**@var \Doctrine\ORM\QueryBuilder $qb*/
+        $qb = $repository->createQueryBuilder ('u')
+            ->where('u.roles != :roles')
+            ->setParameter('roles', 'a:1:{i:0;s:10:"ROLE_ADMIN";}');
+
+        $source = new Mesour\DataGrid\Sources\DoctrineGridSource(User::class , 'id', $qb);
+        $grid->setSource($source);
+
         $grid->addText('id', '#');
         $grid->addText('username', 'Username');
         $grid->addText('email', 'Email');
         $grid->addText('hasRole', 'Enabled');
+        $createdGrid = $grid->create();
 
-        $grid->onRender[] = function(Mesour\UI\DataGrid $grid, $rawData, $data){
-
-        };
+        //need to refresh page otherwise
+        if($request->get('m_do') != null)
+            return new RedirectResponse($this->generateUrl('admin'));
 
         return $this->render('default/admin.html.twig', [
-            'grid' => $grid->create()
+            'grid' => $createdGrid
         ]);
+    }
+
+    private function approveUser($isApproved, $ids){
+        $userManager = $this->get('fos_user.user_manager');
+        $repository = $this->getDoctrine()
+            ->getRepository('AppBundle:User');
+        foreach ($ids as $id => $isChecked){
+            if($isChecked == "true") {
+                $user = $repository->find($id);
+                if($user != null){
+                    if($isApproved)
+                        $user->addRole(User::ROLE_APPROVED);
+                    else
+                        $user->removeRole(User::ROLE_APPROVED);
+                    $userManager->updateUser($user);
+                }
+            }
+        }
     }
 }
