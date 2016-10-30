@@ -2,7 +2,6 @@ services:
     app.mail:
         class: AppBundle\Service\MailService
         arguments:
-            user: '@security.token_storage'
             mailer: '@mailer'
             mailer_no_reply: '%mailer_no_reply%'
             mailer_reciever: '%mailer_receiver%'

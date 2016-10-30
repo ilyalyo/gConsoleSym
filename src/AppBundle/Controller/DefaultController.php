@@ -182,7 +182,7 @@ class DefaultController extends Controller
                 if($user != null){
                     if($isApproved){
                         $user->addRole(User::ROLE_APPROVED);
-                        $this->container->get('app.mail')->onUserApproved();
+                        $this->container->get('app.mail')->onUserApproved($user->getEmail());
                     }
                     else
                         $user->removeRole(User::ROLE_APPROVED);

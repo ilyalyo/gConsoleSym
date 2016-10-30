@@ -23,27 +23,23 @@ class MailService
     
     /**
      * RegistrationListener constructor.
-     * @param TokenStorage $token_storage
      * @param Swift_Mailer $mailer
      * @param string $mailer_no_reply
      * @param string $mailer_receiver
      */
-    public function __construct(TokenStorage $token_storage, Swift_Mailer $mailer, $mailer_no_reply, $mailer_receiver)
+    public function __construct(Swift_Mailer $mailer, $mailer_no_reply, $mailer_receiver)
     {
-        $this->token_storage = $token_storage;
         $this->mailer = $mailer;
         $this->mailer_no_reply = $mailer_no_reply;
         $this->mailer_receiver = $mailer_receiver;
     }
 
-    public function onUserApproved()
+    public function onUserApproved($email)
     {
-        $user = $this->token_storage->getToken()->getUser();
-        
         $message = Swift_Message::newInstance()
             ->setSubject('Status changed')
             ->setFrom($this->mailer_email)
-            ->setTo($user->getEmail())
+            ->setTo($email)
             ->setBody(
                 "You've been approved by admin!",
                 'text/html'
