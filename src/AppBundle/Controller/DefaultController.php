@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Client;
 use AppBundle\Utils\GoogleUtils;
 use AppBundle\Utils\GridUtils;
+use FOS\UserBundle\Util\UserManipulator;
 use Google_Client;
 use Google_Service_Oauth2;
 use Google_Service_Webmasters;
@@ -179,10 +180,13 @@ class DefaultController extends Controller
             if($isChecked == "true") {
                 $user = $repository->find($id);
                 if($user != null){
-                    if($isApproved)
+                    if($isApproved){
                         $user->addRole(User::ROLE_APPROVED);
+                        $this->container->get('app.mail')->onUserApproved();
+                    }
                     else
                         $user->removeRole(User::ROLE_APPROVED);
+
                     $userManager->updateUser($user);
                 }
             }

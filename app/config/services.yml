@@ -1,17 +1,16 @@
 services:
-    app.registration_listener:
-        class: AppBundle\EventListener\RegistrationListener
+    app.mail:
+        class: AppBundle\Service\MailService
         arguments:
-            router: '@router'
+            user: '@security.token_storage'
             mailer: '@mailer'
             mailer_no_reply: '%mailer_no_reply%'
             mailer_reciever: '%mailer_receiver%'
-        tags:
-            - { name: kernel.event_subscriber }
-    app.user_role_listener:
-        class: AppBundle\EventListener\UserRoleListener
+
+    app.registration_listener:
+        class: AppBundle\EventListener\RegistrationListener
         arguments:
-            mailer: '@mailer'
-            mailer_email: '%mailer_user%'
+            mail_service: '@app.mail'
+            router: '@router'
         tags:
             - { name: kernel.event_subscriber }
