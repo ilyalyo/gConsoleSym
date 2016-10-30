@@ -104,8 +104,7 @@ class GoogleUtils{
             
                 if ($tmpEDate > $endDate)
                     $tmpEDate = $endDate;
-                echo "<p>{$tmpSDate->format($dateFormat)} - {$tmpEDate->format($dateFormat)}</p>";
-                self::makeRequest($em, $service, 
+                self::makeRequest($em, $service,
                     $tmpSDate->format($dateFormat),
                     $tmpEDate->format($dateFormat),
                     $website);
@@ -150,8 +149,9 @@ class GoogleUtils{
             }
         }
         catch (Exception $e){
-            var_dump($e);
-            die();
+         /*
+           var_dump($e);
+            die();*/
         }
     }
 
