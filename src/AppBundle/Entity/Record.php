@@ -22,7 +22,7 @@ class Record
     protected $website;
 
     /** @ORM\Column(type="string") */
-    protected $date;
+    protected $dateString;
     /** @ORM\Column(type="string") */
     protected $country;
     /** @ORM\Column(type="string") */
@@ -77,13 +77,13 @@ class Record
     /**
      * Set date
      *
-     * @param string $date
+     * @param string $dateString
      *
      * @return Record
      */
-    public function setDate($date)
+    public function setDateString($dateString)
     {
-        $this->date = $date;
+        $this->dateString = $dateString;
 
         return $this;
     }
@@ -93,9 +93,9 @@ class Record
      *
      * @return string
      */
-    public function getDate()
+    public function getDateString()
     {
-        return $this->date;
+        return $this->dateString;
     }
 
     /**
