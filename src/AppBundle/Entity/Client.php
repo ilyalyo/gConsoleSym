@@ -22,7 +22,7 @@ class Client
      */
     protected $user;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="integer", precision=25) */
     protected $googleId;
 
     /** @ORM\Column(type="string") */
