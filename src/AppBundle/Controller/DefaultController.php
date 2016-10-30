@@ -39,10 +39,11 @@ class DefaultController extends Controller
     public function mainAction(Request $request, $client_id = -1)
     {
         $em = $this->getDoctrine()->getManager();
+        $clients = $em->getRepository('AppBundle:Client')->findBy(['user' => $this->getUser()]);
 
         $client = $em->getRepository('AppBundle:Client')->find($client_id);
-
-        $clients = $em->getRepository('AppBundle:Client')->findBy(['user' => $this->getUser()]);
+        if($client == null && count($clients) > 0 )
+            $client = $clients[0];
 
         $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $googleClient = GoogleUtils::getGoogleClient($redirect_uri);
