@@ -77,7 +77,7 @@ class GoogleUtils{
             }
 
             $startDate = $em->getRepository('AppBundle:Record')->getLastRecordDateAsString($website);
-
+            var_dump($startDate);
             if ($startDate == null) {
                 $startDate = new DateTime();
                 $startDate->modify('-3 month');
