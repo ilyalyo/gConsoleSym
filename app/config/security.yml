@@ -3,8 +3,8 @@ security:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
     role_hierarchy:
-        ROLE_APPROVED:     ROLE_USER
-        ROLE_ADMIN:       ROLE_INVITED
+        ROLE_APPROVED:    ROLE_USER
+        ROLE_ADMIN:       ROLE_APPROVED
         ROLE_SUPER_ADMIN: ROLE_ADMIN
 
     providers:
