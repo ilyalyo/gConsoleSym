@@ -40,6 +40,21 @@ class Record
     /** @ORM\Column(type="float") */
     protected $position;
 
+    public function toArray(){
+        return [
+            "id" => $this->id,
+            "date" => $this->dateString,
+            "country" => $this->country,
+            "device" => $this->device,
+            "query" => $this->query,
+            "page" => $this->page,
+            "clicks" => $this->clicks,
+            "impressions" => $this->impressions,
+            "ctr" => $this->ctr,
+            "position" => $this->position,
+        ];
+    }
+
     /**
      * Get id
      *
