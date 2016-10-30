@@ -43,7 +43,7 @@ class Record
     public function toArray(){
         return [
             "id" => $this->id,
-            "date" => $this->dateString,
+            "date_string" => $this->dateString,
             "country" => $this->country,
             "device" => $this->device,
             "query" => $this->query,

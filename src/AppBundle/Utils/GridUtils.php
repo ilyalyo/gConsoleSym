@@ -3,6 +3,8 @@ namespace AppBundle\Utils;
 
 
 use AppBundle\Entity\Record;
+use AppBundle\Entity\User;
+use AppBundle\Entity\Website;
 use Doctrine\ORM\EntityManager;
 use Mesour\DataGrid\Sources\DoctrineGridSource;
 use Mesour\UI\Application;
@@ -12,16 +14,19 @@ class GridUtils
 {
     /**
      * @param EntityManager $em
+     * @param Website $website
      * @return DataGrid
      */
-    public static function configureGrid($em){
+    public static function configureGrid($em, $website){
         $application = new Application();
         $application->setRequest($_REQUEST);
         $application->run();
 
         $qb = $em->createQueryBuilder();
         $qb->select('r')
-            ->from(Record::class, 'r');
+            ->from(Record::class, 'r')
+            ->where('r.website = :website')
+            ->setParameter('website', $website->getId());
         $source = new DoctrineGridSource(Record::class, 'id', $qb);
         $grid = new DataGrid('grid', $application);
 
