@@ -77,7 +77,6 @@ class GoogleUtils{
             }
 
             $startDate = $em->getRepository('AppBundle:Record')->getLastRecordDateAsString($website);
-            var_dump($startDate);
             if ($startDate == null) {
                 $startDate = new DateTime();
                 $startDate->modify('-3 month');
@@ -113,6 +112,7 @@ class GoogleUtils{
                 usleep(200000);
                 $tmpSDate->modify('+7 day');
             }
+            $em->flush();
         }
     }
 
@@ -148,9 +148,10 @@ class GoogleUtils{
                 $record->setPosition($row->position);
                 $em->persist($record);
             }
-            $em->flush();
         }
         catch (Exception $e){
+            var_dump($e);
+            die();
         }
     }
 
