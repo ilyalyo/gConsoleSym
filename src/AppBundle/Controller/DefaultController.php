@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
 use AppBundle\Utils\GoogleUtils;
+use AppBundle\Utils\GridUtils;
 use Google_Client;
 use Google_Service_Oauth2;
 use Google_Service_Webmasters;
@@ -26,7 +27,6 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
         return $this->render('default/index.html.twig');
     }
 
@@ -45,6 +45,9 @@ class DefaultController extends Controller
         if($client == null && count($clients) > 0 )
             $client = $clients[0];
 
+        if($client != null)
+            $grid = GridUtils::configureGrid($em);
+        
         $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $googleClient = GoogleUtils::getGoogleClient($redirect_uri);
 
@@ -52,6 +55,7 @@ class DefaultController extends Controller
 
         return $this->render('default/main.html.twig',[
             'client' => $client,
+            'grid' => $grid,
             'clients' => $clients,
             'authUrl' => $authUrl,
         ]);
@@ -176,7 +180,6 @@ class DefaultController extends Controller
         $grid->addText('email', 'Email');
         $grid->addText('hasRole', 'Enabled');
 
-        // replace this example code with whatever you need
         return $this->render('default/admin.html.twig', [
             'grid' => $grid->create()
         ]);

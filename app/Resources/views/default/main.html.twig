@@ -25,6 +25,9 @@
                             Connect google account</a></li>
                 {% endif %}
             </ul>
+            {% if grid %}
+                {{ grid.render }}
+            {% endif %}
         {% else %}
             <p>You a not approved by admin yet.</p>
         {% endif %}
