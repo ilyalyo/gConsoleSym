@@ -1,13 +1,30 @@
 {% extends 'base.html.twig' %}
-
+{# @controller AppBundle:Default:main #}
 {% block body %}
 <div class="container">
     <div class="row">
     <h1>Main</h1>
         {% if is_granted('ROLE_INVITED') %}
-            {% if authUrl %}
-                <a href="{{ authUrl }}">Connect google account</a>
-            {% endif %}
+            <ul class="nav nav-tabs">
+                {% for c in clients %}
+                    {% set active = "" %}
+                    {% if client and client.id == c.id %}
+                        {% set active = "class='active'" %}
+                    {% endif %}
+
+                    <li role="presentation" {{ active }}>
+                        <a href="{{ c.id }}">
+                            <img src="{{ c.picture }}" class="img-circle" width="20" height="20">
+                            {{ c.email }}</a>
+                    </li>
+                {% endfor %}
+                {% if authUrl %}
+                    <li role="presentation">
+                        <a href="{{ authUrl }}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Connect google account</a></li>
+                {% endif %}
+            </ul>
         {% else %}
             <p>You a not approved by admin yet.</p>
         {% endif %}

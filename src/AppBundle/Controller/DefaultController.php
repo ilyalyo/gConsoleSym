@@ -31,18 +31,27 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/main", name="main")
+     * @Route("/main/{client_id}", name="main")
      * @param Request $request
+     * @param int $client_id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function mainAction(Request $request)
+    public function mainAction(Request $request, $client_id = null)
     {
-        $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $client = GoogleUtils::getGoogleClient($redirect_uri);
+        $em = $this->getDoctrine()->getManager();
 
-        $authUrl = $client->createAuthUrl();
+        $client = $em->getRepository('AppBundle:Client')->find($client_id);
+
+        $clients = $em->getRepository('AppBundle:Client')->findBy(['user' => $this->getUser()]);
+
+        $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $googleClient = GoogleUtils::getGoogleClient($redirect_uri);
+
+        $authUrl = $googleClient->createAuthUrl();
 
         return $this->render('default/main.html.twig',[
+            'client' => $client,
+            'clients' => $clients,
             'authUrl' => $authUrl,
         ]);
     }
@@ -55,7 +64,7 @@ class DefaultController extends Controller
     public function gRedirectAction(Request $request)
     {
         $code = $request->get('code');
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $googleClient = GoogleUtils::getGoogleClient($redirect_uri);      
         
@@ -74,7 +83,7 @@ class DefaultController extends Controller
             $client->setPicture($gPicture);
             $client->setUser($this->getUser());
         }
-        
+
         $client->setToken($token);
         $em->persist($client);
         $em->flush();
