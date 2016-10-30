@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
     <h1>Main</h1>
-        {% if is_granted('ROLE_INVITED') %}
+        {% if is_granted('ROLE_APPROVED') %}
             <ul class="nav nav-tabs">
                 {% for c in clients %}
                     {% set active = "" %}

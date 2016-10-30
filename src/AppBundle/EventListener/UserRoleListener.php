@@ -14,10 +14,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class UserRoleListener implements EventSubscriberInterface
 {
 
-    private $router;
     private $mailer;
     private $mailer_email;
-    private $mailer_receiver;
 
     /**
      * RegistrationListener constructor.
