@@ -36,7 +36,7 @@ class DefaultController extends Controller
      * @param int $client_id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function mainAction(Request $request, $client_id = null)
+    public function mainAction(Request $request, $client_id = -1)
     {
         $em = $this->getDoctrine()->getManager();
 

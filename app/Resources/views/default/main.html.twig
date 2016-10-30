@@ -9,7 +9,7 @@
                 {% for c in clients %}
                     {% set active = "" %}
                     {% if client and client.id == c.id %}
-                        {% set active = "class='active'" %}
+                        {% set active = "class=active" %}
                     {% endif %}
 
                     <li role="presentation" {{ active }}>
