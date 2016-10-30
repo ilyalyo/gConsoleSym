@@ -15,21 +15,21 @@ class RegistrationListener implements EventSubscriberInterface
 
     private $router;
     private $mailer;
-    private $mailer_email;
+    private $mailer_no_reply;
     private $mailer_receiver;
 
     /**
      * RegistrationListener constructor.
      * @param Router $router
      * @param Swift_Mailer $mailer
-     * @param string $mailer_email
+     * @param string $mailer_no_reply
      * @param string $mailer_receiver
      */
-    public function __construct(Router $router, Swift_Mailer $mailer, $mailer_email, $mailer_receiver)
+    public function __construct(Router $router, Swift_Mailer $mailer, $mailer_no_reply, $mailer_receiver)
     {
         $this->router = $router;
         $this->mailer = $mailer;
-        $this->mailer_email = $mailer_email;
+        $this->mailer_no_reply = $mailer_no_reply;
         $this->mailer_receiver = $mailer_receiver;
     }
 
@@ -44,7 +44,7 @@ class RegistrationListener implements EventSubscriberInterface
     {
            $message = Swift_Message::newInstance()
             ->setSubject('New registration')
-            ->setFrom($this->mailer_email)
+            ->setFrom($this->mailer_no_reply)
             ->setTo($this->mailer_receiver)
             ->setBody(
                 "New user registered.",

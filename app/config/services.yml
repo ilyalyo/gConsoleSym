@@ -4,7 +4,7 @@ services:
         arguments:
             router: '@router'
             mailer: '@mailer'
-            mailer_email: '%mailer_user%'
+            mailer_no_reply: '%mailer_no_reply%'
             mailer_reciever: '%mailer_receiver%'
         tags:
             - { name: kernel.event_subscriber }
