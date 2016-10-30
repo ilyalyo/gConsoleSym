@@ -68,6 +68,7 @@ class DefaultController extends Controller
         $client->setGoogleId($gId);
         $client->setEmail($gEmail);
         $client->setToken($token);
+        $client->setUser($this->getUser());
         $em->persist($client);
         $em->flush();
 
