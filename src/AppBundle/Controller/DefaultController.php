@@ -45,8 +45,11 @@ class DefaultController extends Controller
         if($client == null && count($clients) > 0 )
             $client = $clients[0];
 
-        if($client != null)
-            $grid = GridUtils::configureGrid($em);
+        $grid = null;
+        if($client != null) {
+            $website = $em->getRepository('AppBundle:Website')->findOneBy(['client' => $client]);
+            $grid = GridUtils::configureGrid($em, $website);
+        }
         
         $redirect_uri = $this->generateUrl('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $googleClient = GoogleUtils::getGoogleClient($redirect_uri);
@@ -179,6 +182,10 @@ class DefaultController extends Controller
         $grid->addText('username', 'Username');
         $grid->addText('email', 'Email');
         $grid->addText('hasRole', 'Enabled');
+
+        $grid->onRender[] = function(Mesour\UI\DataGrid $grid, $rawData, $data){
+
+        };
 
         return $this->render('default/admin.html.twig', [
             'grid' => $grid->create()
