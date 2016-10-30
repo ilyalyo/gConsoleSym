@@ -23,6 +23,6 @@ class RecordRepository extends \Doctrine\ORM\EntityRepository
                 WHERE r.website = :website'
             )
             ->setParameter('website', $website->getId())
-            ->getResult();
+            ->getSingleResult();
     }
 }
