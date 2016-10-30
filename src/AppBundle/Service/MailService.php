@@ -15,9 +15,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class MailService
 {
-    private $token_storage;
     private $mailer;
-    private $mailer_email;
     private $mailer_no_reply;
     private $mailer_receiver;
     
@@ -38,7 +36,7 @@ class MailService
     {
         $message = Swift_Message::newInstance()
             ->setSubject('Status changed')
-            ->setFrom($this->mailer_email)
+            ->setFrom($this->mailer_no_reply)
             ->setTo($email)
             ->setBody(
                 "You've been approved by admin!",
