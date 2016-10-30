@@ -20,9 +20,9 @@ class RecordRepository extends \Doctrine\ORM\EntityRepository
             ->createQuery(
                 'SELECT MAX(r.dateString) 
                 FROM AppBundle:Record r 
-                WHERE r.website = :website'
+                WHERE r.website_id = :website'
             )
-            ->setParameter('website', $website)
+            ->setParameter('website', $website->getId())
             ->getResult();
     }
 }
