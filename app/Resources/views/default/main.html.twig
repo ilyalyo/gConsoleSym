@@ -13,7 +13,7 @@
                     {% endif %}
 
                     <li role="presentation" {{ active }}>
-                        <a href="{{ c.id }}">
+                        <a href="{{ path('main', {'client_id': c.id }) }}">
                             <img src="{{ c.picture }}" class="img-circle" width="20" height="20">
                             {{ c.email }}</a>
                     </li>
