@@ -28,6 +28,9 @@ class Client
     /** @ORM\Column(type="string") */
     protected $email;
 
+    /** @ORM\Column(type="string") */
+    protected $picture;
+
     /** @ORM\Column(type="array") */
     protected $token;
 
@@ -135,5 +138,29 @@ class Client
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Set picture
+     *
+     * @param string $picture
+     *
+     * @return Client
+     */
+    public function setPicture($picture)
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
+
+    /**
+     * Get picture
+     *
+     * @return string
+     */
+    public function getPicture()
+    {
+        return $this->picture;
     }
 }

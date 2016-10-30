@@ -62,20 +62,25 @@ class DefaultController extends Controller
         $token = $googleClient->fetchAccessTokenWithAuthCode($code);
         $oauthService = new Google_Service_Oauth2($googleClient);
         $gId = $oauthService->userinfo->get()->getId();
-        $gEmail = $oauthService->userinfo->get()->getEmail();
 
-        $client = new Client();
-        $client->setGoogleId($gId);
-        $client->setEmail($gEmail);
-        $client->setToken($token);
-        $client->setUser($this->getUser());
-        $em->persist($client);
-        $em->flush();
+        $client = $em->getRepository('AppBundle:Client')->findOneBy(['googleId' => $gId]);
+        if($client == null){
+            $gEmail = $oauthService->userinfo->get()->getEmail();
+            $gPicture = $oauthService->userinfo->get()->getPicture();
+
+            $client = new Client();
+            $client->setGoogleId($gId);
+            $client->setEmail($gEmail);
+            $client->setToken($token);
+            $client->setPicture($gPicture);
+            $client->setUser($this->getUser());
+            $em->persist($client);
+            $em->flush();
+        }
 
         GoogleUtils::updateData($googleClient, $em, $client);
 
-        $url = $this->generateUrl('main');
-        return new RedirectResponse($url);
+        return new RedirectResponse($this->generateUrl('main'));
     }
 
     /**
