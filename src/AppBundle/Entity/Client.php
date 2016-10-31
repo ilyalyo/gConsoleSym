@@ -117,30 +117,6 @@ class Client
     }
 
     /**
-     * Set token
-     *
-     * @param array $token
-     *
-     * @return Client
-     */
-    public function setToken($token)
-    {
-        $this->token = json_encode($token);
-
-        return $this;
-    }
-
-    /**
-     * Get token
-     *
-     * @return array
-     */
-    public function getToken()
-    {
-        return json_decode($this->token);
-    }
-
-    /**
      * Set picture
      *
      * @param string $picture
@@ -162,5 +138,29 @@ class Client
     public function getPicture()
     {
         return $this->picture;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $token
+     *
+     * @return Client
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }

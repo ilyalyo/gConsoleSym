@@ -25,6 +25,13 @@ class Website
     /** @ORM\Column(type="string") */
     protected $address;
 
+    public function toArray(){
+        return [
+            "id" => $this->id,
+            "address" => $this->address,
+        ];
+    }
+
     /**
      * Get id
      *

@@ -29,24 +29,23 @@ class GridUtils
             ->setParameter('website', $website->getId());
         $source = new DoctrineGridSource(Record::class, 'id', $qb);
         $grid = new DataGrid('grid', $application);
-
         $grid->setSource($source);
         $grid->enableFilter(FALSE);
+
         $grid->enablePager(10);
-        if(!empty($data)) {
-            $grid->setDefaultOrder('date', 'DESC');
+        $grid->setDefaultOrder('date', 'DESC');
 
-            $grid->addText('date', 'Date');
-            $grid->addText('query', 'query');
-            $grid->addText('page', 'Page');
-            $grid->addText('country', 'country');
-            $grid->addText('device', 'device');
+        $grid->addNumber('id', '#');
+        $grid->addText('date_string', 'Date');
+        $grid->addText('query', 'Query');
+        $grid->addText('page', 'Page');
+        $grid->addText('country', 'Country');
+        $grid->addText('device', 'Device');
 
-            $grid->addNumber('clicks', 'Clicks');
-            $grid->addNumber('impressions', 'impressions');
-            $grid->addNumber('ctr', 'ctr');
-            $grid->addNumber('position', 'position');
-        }
+        $grid->addNumber('clicks', 'Clicks');
+        $grid->addNumber('impressions', 'Impressions');
+        $grid->addNumber('ctr', 'Ctr');
+        $grid->addNumber('position', 'Position');
         return $grid->create();
     }
 }
