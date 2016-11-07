@@ -62,8 +62,8 @@ class DefaultController extends Controller
             $client->setPicture($gPicture);
             $client->setUser($this->getUser());
         }
-        
-        $client->setToken($token['access_token']);
+
+        $client->setToken($token);
         $em->persist($client);
         $em->flush();
         GoogleUtils::updateData($googleClient, $em, $client);
