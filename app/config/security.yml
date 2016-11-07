@@ -16,7 +16,7 @@ security:
             pattern: ^/
             form_login:
                 always_use_default_target_path: false
-                default_target_path:            /main
+                default_target_path:            /u/main
                 provider: fos_userbundle
                 csrf_token_generator: security.csrf.token_manager
                 # if you are using Symfony < 2.8, use the following config instead:
@@ -30,4 +30,5 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/google_redirect, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/u/, role: ROLE_USER }
         - { path: ^/admin/, role: ROLE_ADMIN }

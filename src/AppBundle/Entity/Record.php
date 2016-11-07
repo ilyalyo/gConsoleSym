@@ -1,10 +1,11 @@
 <?php
 namespace AppBundle\Entity;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\RecordRepository")
- * @ORM\Table(name="data")
+ * @ORM\Table(name="record")
  */
 class Record
 {
@@ -21,7 +22,7 @@ class Record
      */
     protected $website;
 
-    /** @ORM\Column(type="string") */
+    /** @ORM\Column(type="datetime") */
     protected $dateString;
     /** @ORM\Column(type="string") */
     protected $country;
@@ -39,21 +40,6 @@ class Record
     protected $ctr;
     /** @ORM\Column(type="float") */
     protected $position;
-
-    public function toArray(){
-        return [
-            "id" => $this->id,
-            "date_string" => $this->dateString,
-            "country" => $this->country,
-            "device" => $this->device,
-            "query" => $this->query,
-            "page" => $this->page,
-            "clicks" => $this->clicks,
-            "impressions" => $this->impressions,
-            "ctr" => $this->ctr,
-            "position" => $this->position,
-        ];
-    }
 
     /**
      * Get id
@@ -87,30 +73,6 @@ class Record
     public function getWebsite()
     {
         return $this->website;
-    }
-
-    /**
-     * Set date
-     *
-     * @param string $dateString
-     *
-     * @return Record
-     */
-    public function setDateString($dateString)
-    {
-        $this->dateString = $dateString;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return string
-     */
-    public function getDateString()
-    {
-        return $this->dateString;
     }
 
     /**
@@ -303,5 +265,29 @@ class Record
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * Set dateString
+     *
+     * @param \DateTime $dateString
+     *
+     * @return Record
+     */
+    public function setDateString($dateString)
+    {
+        $this->dateString = $dateString;
+
+        return $this;
+    }
+
+    /**
+     * Get dateString
+     *
+     * @return \DateTime
+     */
+    public function getDateString()
+    {
+        return $this->dateString;
     }
 }

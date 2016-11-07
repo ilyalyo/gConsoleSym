@@ -17,7 +17,7 @@ class Website
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Client")
+     * @ORM\ManyToOne(targetEntity="Client", inversedBy="websites")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $client;
@@ -25,11 +25,8 @@ class Website
     /** @ORM\Column(type="string") */
     protected $address;
 
-    public function toArray(){
-        return [
-            "id" => $this->id,
-            "address" => $this->address,
-        ];
+    public function __toString(){
+        return $this->address;
     }
 
     /**

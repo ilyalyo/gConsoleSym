@@ -22,6 +22,11 @@ class Client
      */
     protected $user;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Website", mappedBy="client")
+     */
+    protected $websites;
+
     /** @ORM\Column(type="string") */
     protected $googleId;
 
@@ -162,5 +167,46 @@ class Client
     public function getToken()
     {
         return $this->token;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->websites = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add website
+     *
+     * @param \AppBundle\Entity\Website $website
+     *
+     * @return Client
+     */
+    public function addWebsite(\AppBundle\Entity\Website $website)
+    {
+        $this->websites[] = $website;
+
+        return $this;
+    }
+
+    /**
+     * Remove website
+     *
+     * @param \AppBundle\Entity\Website $website
+     */
+    public function removeWebsite(\AppBundle\Entity\Website $website)
+    {
+        $this->websites->removeElement($website);
+    }
+
+    /**
+     * Get websites
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
     }
 }
