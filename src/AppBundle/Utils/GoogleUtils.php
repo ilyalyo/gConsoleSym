@@ -136,7 +136,7 @@ class GoogleUtils{
             foreach ($data->getRows() as $row){
                 $record = new Record();
                 $record->setWebsite($website);
-                $record->setDateString($row->keys[0]);
+                $record->setDateString(new DateTime($row->keys[0]));
                 $record->setCountry($row->keys[1]);
                 $record->setDevice($row->keys[2]);
                 $record->setQuery($row->keys[3]);

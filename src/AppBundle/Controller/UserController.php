@@ -98,8 +98,8 @@ class UserController extends Controller
             $qb->addSelect('record.dateString');
             $qb->addSelect('SUM(record.clicks)');
             $qb->addSelect('SUM(record.impressions)');
-            $qb->addSelect('SUM(record.ctr)');
-            $qb->addSelect('SUM(record.position)');
+            $qb->addSelect('AVG(record.ctr)');
+            $qb->addSelect('AVG(record.position)');
             $qb->groupBy('record.dateString');
             $query->setQuery($qb);
             $result = $this->getDoctrine()->getEntityManager()->createQuery($qb->getQuery()->getDQL())
