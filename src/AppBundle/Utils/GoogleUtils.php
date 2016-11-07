@@ -149,9 +149,6 @@ class GoogleUtils{
             }
         }
         catch (Exception $e){
-         /*
-           var_dump($e);
-            die();*/
         }
     }
 

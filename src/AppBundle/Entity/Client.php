@@ -36,7 +36,7 @@ class Client
     /** @ORM\Column(type="string") */
     protected $picture;
 
-    /** @ORM\Column(type="string", length=500) */
+    /** @ORM\Column(type="string", length=1500) */
     protected $token;
 
     /**
