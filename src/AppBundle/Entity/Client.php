@@ -154,7 +154,7 @@ class Client
      */
     public function setToken($token)
     {
-        $this->token = serialize($token);
+        $this->token = json_encode($token);
 
         return $this;
     }
