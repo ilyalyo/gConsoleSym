@@ -49,18 +49,22 @@ class DefaultController extends Controller
         
         $token = $googleClient->fetchAccessTokenWithAuthCode($code);
         $oauthService = new Google_Service_Oauth2($googleClient);
+
         $gId = $oauthService->userinfo->get()->getId();
+        $gEmail = $oauthService->userinfo->get()->getEmail();
+        $gPicture = $oauthService->userinfo->get()->getPicture();
 
         $client = $em->getRepository('AppBundle:Client')->findOneBy(['googleId' => $gId]);
         if($client == null){
-            $gEmail = $oauthService->userinfo->get()->getEmail();
-            $gPicture = $oauthService->userinfo->get()->getPicture();
-
             $client = new Client();
             $client->setGoogleId($gId);
             $client->setEmail($gEmail);
             $client->setPicture($gPicture);
             $client->setUser($this->getUser());
+        }
+        else{
+            $client->setEmail($gEmail);
+            $client->setPicture($gPicture);
         }
 
         $client->setToken($token);

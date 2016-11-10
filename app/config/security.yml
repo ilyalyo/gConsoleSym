@@ -13,6 +13,7 @@ security:
 
     firewalls:
         main:
+            switch_user: { role: ROLE_ADMIN, parameter: _want_to_be_this_user }
             pattern: ^/
             form_login:
                 always_use_default_target_path: false
