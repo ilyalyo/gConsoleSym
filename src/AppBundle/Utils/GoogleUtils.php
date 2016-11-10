@@ -47,6 +47,7 @@ class GoogleUtils
         $client->setRedirectUri($redirect_uri);
         $client->addScope("https://www.googleapis.com/auth/webmasters");
         $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+        $client->setAccessType("offline");
 
         return $client;
     }

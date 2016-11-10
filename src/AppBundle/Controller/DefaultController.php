@@ -48,8 +48,6 @@ class DefaultController extends Controller
         $googleClient = GoogleUtils::getGoogleClient($redirect_uri);      
         
         $token = $googleClient->fetchAccessTokenWithAuthCode($code);
-        $googleClient->setAccessToken($token);
-        $refresh_token = $googleClient->fetchAccessTokenWithRefreshToken();
         $oauthService = new Google_Service_Oauth2($googleClient);
 
         $gId = $oauthService->userinfo->get()->getId();
@@ -70,7 +68,6 @@ class DefaultController extends Controller
         }
 
         $client->setToken($token);
-        $client->setRefreshToken($refresh_token);
         $em->persist($client);
         $em->flush();
         GoogleUtils::updateData($googleClient, $em, $client);
