@@ -39,6 +39,9 @@ class Client
     /** @ORM\Column(type="string", length=1500) */
     protected $token;
 
+    /** @ORM\Column(type="string", length=1500) */
+    protected $refreshToken;
+
     /**
      * Get id
      *
@@ -208,5 +211,29 @@ class Client
     public function getWebsites()
     {
         return $this->websites;
+    }
+
+    /**
+     * Set refreshToken
+     *
+     * @param string $refreshToken
+     *
+     * @return Client
+     */
+    public function setRefreshToken($refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
+
+    /**
+     * Get refreshToken
+     *
+     * @return string
+     */
+    public function getRefreshToken()
+    {
+        return $this->refreshToken;
     }
 }
