@@ -97,6 +97,8 @@
         }
     </style>
     <script type="text/javascript">
+        $( document ).ready(function() {
+
         // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['line', 'corechart']});
         google.charts.setOnLoadCallback(subscribeToTableUpdates);
@@ -139,5 +141,6 @@
             var materialChart = new google.charts.Line(document.getElementById('chart_div'));
             materialChart.draw(data, materialOptions);
         }
+        });
     </script>
 {% endblock %}

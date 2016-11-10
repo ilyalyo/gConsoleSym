@@ -40,9 +40,6 @@ class RecordDatatable extends AbstractDatatableView
             'length_menu' => array(10, 25, 50, 100),
             'class' => Style::BOOTSTRAP_3_STYLE,
             'individual_filtering' => true,
-            'individual_filtering_position' => 'head',
-            'use_integration_options' => true,
-            'row_id' => 'id',
             'dom' => 'lrtip',
         ));
 
