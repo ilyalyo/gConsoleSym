@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Command;
 
+use AppBundle\Exception\GoogleUpdateException;
 use AppBundle\Utils\GoogleUtils;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Doctrine\ORM\EntityManager;
@@ -20,11 +21,21 @@ class UpdateCommand extends ContainerAwareCommand
     {
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $clients = $em->getRepository('AppBundle:Client')->findAll();
+        $redirect_uri = $this->getContainer()->get('router')->generate('google_redirect', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $gClient = GoogleUtils::getGoogleClient($redirect_uri);
+
         foreach ($clients as $client){
-            $redirect_uri = $this->getContainer()->get('router')->generate('google_redirect');
-            $gClient = GoogleUtils::getGoogleClient($redirect_uri);
             $gClient->setAccessToken($client->getToken());
-            GoogleUtils::updateData($gClient, $em, $client);
+            try {
+                GoogleUtils::updateData($gClient, $em, $client);
+            }
+            catch (GoogleUpdateException $e){
+                $authUrl = $gClient->createAuthUrl();
+                $mailer = $this->getContainer()->get('app.mail');
+                $mailer->onUpdateDataException($client->getEmail(), 
+                    $e->getMessage(),
+                    $authUrl);
+            }
         }
     }
 }

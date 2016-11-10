@@ -57,4 +57,18 @@ class MailService
             );
         $this->mailer->send($message);
     }
+
+
+    public function onUpdateDataException($email, $message, $authUrl)
+    {
+        $message = Swift_Message::newInstance()
+            ->setSubject('Update your token - it\'s expired')
+            ->setFrom($this->mailer_no_reply)
+            ->setTo($email)
+            ->setBody(
+                "To update it follow this link: <a href='$authUrl'>$authUrl</a>",
+                'text/html'
+            );
+        $this->mailer->send($message);
+    }
 }
