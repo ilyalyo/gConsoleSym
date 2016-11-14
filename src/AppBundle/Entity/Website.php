@@ -29,6 +29,13 @@ class Website
         return $this->address;
     }
 
+    public function toArray(){
+        return [
+            "id" => $this->id,
+            "address" => $this->address,
+        ];
+    }
+
     /**
      * Get id
      *

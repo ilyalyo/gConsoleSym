@@ -32,7 +32,6 @@
         "mesour/datagrid": "3.0.*@beta",
         "latte/latte": "^2.4",
         "google/apiclient": "^2.0",
-        "sg/datatablesbundle": "^0.13.0",
         "friendsofsymfony/jsrouting-bundle": "^1.6",
         "beberlei/DoctrineExtensions": "0.3.x-dev"
     },

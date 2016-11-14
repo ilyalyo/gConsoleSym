@@ -13,7 +13,3 @@ services:
             router: '@router'
         tags:
             - { name: kernel.event_subscriber }
-
-    app.datatable.record:
-        class: AppBundle\Datatables\RecordDatatable
-        parent: sg_datatables.datatable.abstract
