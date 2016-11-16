@@ -93,33 +93,35 @@ class UserController extends Controller
                 $grid->addNumber('position', 'Position');
                 $createdGrid = $grid->create();
 
-                $rawData = $source->fetchForExport();
-                usort($rawData, function ($a, $b) {
-                    return $a["dateString"] > $b["dateString"];
-                });
-                $graphData = [];
-                foreach ($rawData as $d) {
-                    $key = $d['roundedDate'];
-                    if (array_key_exists($key, $graphData)) {
-                        $graphData[$key] = [
-                            'clicks' => $graphData[$key]['clicks'] + $d['clicks'],
-                            'impressions' => $graphData[$key]['impressions'] + $d['impressions'],
-                            'ctr' => $graphData[$key]['ctr'] + $d['ctr'],
-                            'position' => $graphData[$key]['position'] + $d['position'],
-                            'count' => $graphData[$key]['count'] + 1
-                        ];
-                    } else
-                        $graphData[$key] = [
-                            'clicks' => $d['clicks'],
-                            'impressions' => $d['impressions'],
-                            'ctr' => $d['ctr'],
-                            'position' => $d['position'],
-                            'count' => 1
-                        ];
-                }
-                foreach ($graphData as $key => $d) {
-                    $graphData[$key]['ctr'] = $graphData[$key]['ctr'] / $graphData[$key]['count'];
-                    $graphData[$key]['position'] = $graphData[$key]['position'] / $graphData[$key]['count'];
+                if($request->isMethod('GET')) {
+                    $rawData = $source->fetchForExport();
+                    usort($rawData, function ($a, $b) {
+                        return $a["dateString"] > $b["dateString"];
+                    });
+                    $graphData = [];
+                    foreach ($rawData as $d) {
+                        $key = $d['roundedDate'];
+                        if (array_key_exists($key, $graphData)) {
+                            $graphData[$key] = [
+                                'clicks' => $graphData[$key]['clicks'] + $d['clicks'],
+                                'impressions' => $graphData[$key]['impressions'] + $d['impressions'],
+                                'ctr' => $graphData[$key]['ctr'] + $d['ctr'],
+                                'position' => $graphData[$key]['position'] + $d['position'],
+                                'count' => $graphData[$key]['count'] + 1
+                            ];
+                        } else
+                            $graphData[$key] = [
+                                'clicks' => $d['clicks'],
+                                'impressions' => $d['impressions'],
+                                'ctr' => $d['ctr'],
+                                'position' => $d['position'],
+                                'count' => 1
+                            ];
+                    }
+                    foreach ($graphData as $key => $d) {
+                        $graphData[$key]['ctr'] = $graphData[$key]['ctr'] / $graphData[$key]['count'];
+                        $graphData[$key]['position'] = $graphData[$key]['position'] / $graphData[$key]['count'];
+                    }
                 }
             }
         }
