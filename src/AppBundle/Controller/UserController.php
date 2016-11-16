@@ -27,15 +27,17 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class UserController extends Controller
 {
     /**
-     * @Route("/main/{client_id}", name="main")
+     * @Route("/main/{client_id}/{website_id}", name="main")
      * @param Request $request
      * @param int $client_id
+     * @param int $website_id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function mainAction(Request $request, $client_id = -1)
+    public function mainAction(Request $request, $client_id = -1, $website_id = -1)
     {
         $createdGrid = null;
         $graphData = null;
+        $websites = null;
 
         $em = $this->getDoctrine()->getManager();
         $clients = $em->getRepository('AppBundle:Client')->findBy(['user' => $this->getUser()]);
@@ -44,24 +46,12 @@ class UserController extends Controller
             $client = $clients[0];
 
         if ($client != null) {
-            $form = $this->createFormBuilder()
-                ->add('websites', EntityType::class,
-                    array(
-                        'class' => Website::class,
-                        'label' => 'Website',
-                        'query_builder' => function (EntityRepository $repository) use ($client) {
-                            return $repository->createQueryBuilder('w')
-                                ->where('w.client = :client')
-                                ->setParameter('client', $client);
-                        },
-                    ))
-                ->getForm();
+            $websites = $em->getRepository('AppBundle:Website')->findBy(['client' => $client]);
 
-            $form->handleRequest($request);
-            if ($form->isSubmitted())
-                $website = $form['websites']->getData();
-            else
-                $website = $em->getRepository('AppBundle:Website')->findOneBy(['client' => $client]);
+            $website = $em->getRepository('AppBundle:Website')->find($website_id);
+            if ($website == null && count($websites) > 0)
+                $website = $websites[0];
+
 
             if (isset($website)) {
                 $application = new Application();
@@ -88,7 +78,7 @@ class UserController extends Controller
                 $grid->enableFilter(FALSE);
 
                 $grid->enablePager(10);
-                $grid->setDefaultOrder('dateString', 'DESC');
+                //$grid->setDefaultOrder('dateString', 'DESC');
 
                 $grid->addNumber('id', '#');
                 $grid->addDate('dateString', 'Date');
@@ -138,7 +128,8 @@ class UserController extends Controller
         $googleClient = GoogleUtils::getGoogleClient($redirect_uri);
 
         return $this->render('default/main.html.twig', [
-            'form' => isset($form) ? $form->createView() : null,
+            'websites' => $websites,
+            'website' => $website,
             'client' => $client,
             'grid' => $createdGrid,
             'graphData' => $graphData,

@@ -25,22 +25,27 @@
                                 Connect google account</a></li>
                     {% endif %}
                 </ul>
-                {% if form is defined %}
-                    {{ form_start(form) }}
+                {% if websites is defined %}
                     <div class="container">
                         <div class="row">
                             <div class="col-offset col-md-4">
-                                {{ form_label(form.websites) }}
+                                <form>
+                                <label for="website">Websites</label>
                                 <div class="input-group">
-                                    {{ form_widget(form.websites) }}
-                                    <span class="input-group-btn">
-                                    <input type="submit" value="submit" class="btn"></span>
+                                    <select class="form-control" onChange="top.location.href=this.options[this.selectedIndex].value;">
+                                        {% for w in websites %}
+                                            {% set selected = w.id == website.getId ? 'selected' : '' %}
+                                            <option value='{{ path('main',
+                                            {'client_id': client.getId, 'website_id': w.getId }) }}'
+                                                    {{ selected }}>
+                                                {{ w.getAddress }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    {{ form_rest(form) }}
-                    {{ form_end(form) }}
                 {% endif %}
 
                 {% if grid %}
@@ -86,12 +91,12 @@
                 data.addColumn('number', "ctr");
                 data.addColumn('number', "Position");
                 {% if graphData is defined %}
-                    data.addRows([
-                        {% for date, row in graphData %}
-                        [new Date('{{ date | date("Y-m-d") }}'),
-                            {{ row.clicks }}, {{ row.impressions }}, {{ row.ctr }}, {{ row.position }}],
-                        {% endfor %}
-                    ]);
+                data.addRows([
+                    {% for date, row in graphData %}
+                    [new Date('{{ date | date("Y-m-d") }}'),
+                        {{ row.clicks }}, {{ row.impressions }}, {{ row.ctr }}, {{ row.position }}],
+                    {% endfor %}
+                ]);
                 {% endif %}
 
                 var materialOptions = {
