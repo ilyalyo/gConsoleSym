@@ -6,6 +6,7 @@ use AppBundle\Entity\Record;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Website;
 use AppBundle\Utils\GoogleUtils;
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Mesour\DataGrid\Sources\DoctrineGridSource;
@@ -67,13 +68,21 @@ class UserController extends Controller
                 $application->setRequest($_REQUEST);
                 $application->run();
 
-                /** @var QueryBuilder $cqb */
-                $cqb = $em->createQueryBuilder();
-                $cqb->select('r')
+                /** @var QueryBuilder $qb */
+                $qb = $em->createQueryBuilder();
+                $qb->select('r')
                     ->from(Record::class, 'r')
-                    ->andWhere('r.website = :website')
-                    ->setParameter('website', $website->getId());
-                $source = new DoctrineGridSource(Record::class, 'id', $cqb);
+                    ->where('r.website = :website')
+                    ->setParameter(':website', $website->getId());
+
+                $data = $qb->getQuery()->getArrayResult();
+                foreach ($data as $key => $d) {
+                    $data[$key]['dateString'] = $d['dateString']->getTimestamp();
+                    $data[$key]['roundedDate'] = $d['dateString']->format('Y-m-d');
+                }
+
+                $source = new \Mesour\DataGrid\Sources\ArrayGridSource('users', 'id', $data);
+
                 $grid = new DataGrid('grid', $application);
                 $grid->setSource($source);
                 $grid->enableFilter(FALSE);
@@ -94,24 +103,34 @@ class UserController extends Controller
                 $grid->addNumber('position', 'Position');
                 $createdGrid = $grid->create();
 
-                $cqb = $source->cloneQueryBuilder();
-
-               /* var_dump($cqb->getDQL());
-                var_dump($cqb->getParameters());
-                die();*/
-
-                $cqb->resetDQLPart('groupBy');
-                $cqb->select('r.dateString as date');
-                $cqb->addSelect('SUM(r.clicks) as clicks');
-                $cqb->addSelect('SUM(r.impressions) as impressions');
-                $cqb->addSelect('AVG(r.ctr) as ctr');
-                $cqb->addSelect('AVG(r.position) as position');
-                $cqb->groupBy('r.dateString');
-                $cqb->orderBy('date');
-                //var_dump($qb->getQuery()->getParameters());die();
-                $graphData = $this->getDoctrine()->getEntityManager()
-                    ->createQuery($cqb->getQuery()->getDQL())
-                    ->setParameters($source->getQuery()->getParameters())->execute();
+                $rawData = $source->fetchForExport();
+                usort($rawData, function ($a, $b) {
+                    return $a["dateString"] > $b["dateString"];
+                });
+                $graphData = [];
+                foreach ($rawData as $d) {
+                    $key = $d['roundedDate'];
+                    if (array_key_exists($key, $graphData)) {
+                        $graphData[$key] = [
+                            'clicks' => $graphData[$key]['clicks'] + $d['clicks'],
+                            'impressions' => $graphData[$key]['impressions'] + $d['impressions'],
+                            'ctr' => $graphData[$key]['ctr'] + $d['ctr'],
+                            'position' => $graphData[$key]['position'] + $d['position'],
+                            'count' => $graphData[$key]['count'] + 1
+                        ];
+                    } else
+                        $graphData[$key] = [
+                            'clicks' => $d['clicks'],
+                            'impressions' => $d['impressions'],
+                            'ctr' => $d['ctr'],
+                            'position' => $d['position'],
+                            'count' => 1
+                        ];
+                }
+                foreach ($graphData as $key => $d) {
+                    $graphData[$key]['ctr'] = $graphData[$key]['ctr'] / $graphData[$key]['count'];
+                    $graphData[$key]['position'] = $graphData[$key]['position'] / $graphData[$key]['count'];
+                }
             }
         }
 
