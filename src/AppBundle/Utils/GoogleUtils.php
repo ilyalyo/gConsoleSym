@@ -142,7 +142,6 @@ class GoogleUtils
 
         $searchRequest->setRowLimit(5000);
         $searchRequest->setDimensions(["date", "country", "device", "query", "page"]);
-        $data = [];
         try {
             $data = $service->searchanalytics->query($website->getAddress(), $searchRequest);
         } catch (Exception $e) {
@@ -152,20 +151,21 @@ class GoogleUtils
                     throw new GoogleUpdateException($e->getMessage());
             }
         }
-        foreach ($data->getRows() as $row) {
-            $record = new Record();
-            $record->setWebsite($website);
-            $record->setDateString(new DateTime($row->keys[0]));
-            $record->setCountry($row->keys[1]);
-            $record->setDevice($row->keys[2]);
-            $record->setQuery($row->keys[3]);
-            $record->setPage($row->keys[4]);
-            $record->setClicks($row->clicks);
-            $record->setImpressions($row->impressions);
-            $record->setCtr($row->ctr);
-            $record->setPosition($row->position);
-            $em->persist($record);
-        }
+        if (!empty($data))
+            foreach ($data->getRows() as $row) {
+                $record = new Record();
+                $record->setWebsite($website);
+                $record->setDateString(new DateTime($row->keys[0]));
+                $record->setCountry($row->keys[1]);
+                $record->setDevice($row->keys[2]);
+                $record->setQuery($row->keys[3]);
+                $record->setPage($row->keys[4]);
+                $record->setClicks($row->clicks);
+                $record->setImpressions($row->impressions);
+                $record->setCtr($row->ctr);
+                $record->setPosition($row->position);
+                $em->persist($record);
+            }
     }
 }
 
