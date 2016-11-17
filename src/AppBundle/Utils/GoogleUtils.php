@@ -142,6 +142,7 @@ class GoogleUtils
 
         $searchRequest->setRowLimit(5000);
         $searchRequest->setDimensions(["date", "country", "device", "query", "page"]);
+        $data = [];
         try {
             $data = $service->searchanalytics->query($website->getAddress(), $searchRequest);
         } catch (Exception $e) {
