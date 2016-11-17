@@ -67,62 +67,61 @@ class GoogleUtils
         $dateFormat = 'Y-m-d';
 
         try {
-
             foreach ($service->sites->listSites()->getSiteEntry() as $siteEntry)
                 $addresses [] = $siteEntry['siteUrl'];
-
-            foreach ($addresses as $address) {
-                $website = $em->getRepository('AppBundle:Website')->findOneBy([
-                    'client' => $client, 'address' => $address]);
-
-                if ($website == null) {
-                    $website = new Website();
-                    $website->setClient($client);
-                    $website->setAddress($address);
-                    $em->persist($website);
-                }
-
-                $startDate = $em->getRepository('AppBundle:Record')->getLastRecordDateAsString($website);
-                if ($startDate == null) {
-                    $startDate = new DateTime();
-                    $startDate->modify('-3 month');
-                } else
-                    $startDate = new DateTime($startDate);
-
-                $endDate = new DateTime();
-                $endDate->modify('-1 day');
-
-                $interval = date_diff($startDate, $endDate);
-                $daysBetween = $interval->format('%a');
-
-                //don't need to update data
-                if ($daysBetween == 0)
-                    continue;
-
-                $tmpSDate = clone $startDate;
-                $tmpSDate->modify('+1 day');
-                $tmpEDate = clone $startDate;
-
-                while ($tmpSDate <= $endDate) {
-                    $tmpEDate->modify('+7 day');
-
-                    if ($tmpEDate > $endDate)
-                        $tmpEDate = $endDate;
-                    self::makeRequest($em, $service,
-                        $tmpSDate->format($dateFormat),
-                        $tmpEDate->format($dateFormat),
-                        $website);
-                    usleep(200000);
-                    $tmpSDate->modify('+7 day');
-                }
-                $em->flush();
-            }
         } catch (Exception $e) {
             if ($e instanceof Google_Service_Exception) {
                 //User does not have sufficient permission for site
-                if($e->getCode() != 403)
+                if ($e->getCode() != 403)
                     throw new GoogleUpdateException($e->getMessage());
             }
+        }
+        foreach ($addresses as $address) {
+            $website = $em->getRepository('AppBundle:Website')->findOneBy([
+                'client' => $client, 'address' => $address]);
+
+            if ($website == null) {
+                $website = new Website();
+                $website->setClient($client);
+                $website->setAddress($address);
+                $em->persist($website);
+            }
+
+            $startDate = $em->getRepository('AppBundle:Record')->getLastRecordDateAsString($website);
+            if ($startDate == null) {
+                $startDate = new DateTime();
+                $startDate->modify('-3 month');
+            } else
+                $startDate = new DateTime($startDate);
+
+            $endDate = new DateTime();
+            $endDate->modify('-1 day');
+
+            $interval = date_diff($startDate, $endDate);
+            $daysBetween = $interval->format('%a');
+
+            //don't need to update data
+            if ($daysBetween == 0)
+                continue;
+
+            $tmpSDate = clone $startDate;
+            $tmpSDate->modify('+1 day');
+            $tmpEDate = clone $startDate;
+
+            while ($tmpSDate <= $endDate) {
+                $tmpEDate->modify('+7 day');
+
+                if ($tmpEDate > $endDate)
+                    $tmpEDate = $endDate;
+
+                self::makeRequest($em, $service,
+                    $tmpSDate->format($dateFormat),
+                    $tmpEDate->format($dateFormat),
+                    $website);
+                usleep(200000);
+                $tmpSDate->modify('+7 day');
+            }
+            $em->flush();
         }
     }
 
@@ -143,7 +142,15 @@ class GoogleUtils
 
         $searchRequest->setRowLimit(5000);
         $searchRequest->setDimensions(["date", "country", "device", "query", "page"]);
-        $data = $service->searchanalytics->query($website->getAddress(), $searchRequest);
+        try {
+            $data = $service->searchanalytics->query($website->getAddress(), $searchRequest);
+        } catch (Exception $e) {
+            if ($e instanceof Google_Service_Exception) {
+                //User does not have sufficient permission for site
+                if ($e->getCode() != 403)
+                    throw new GoogleUpdateException($e->getMessage());
+            }
+        }
         foreach ($data->getRows() as $row) {
             $record = new Record();
             $record->setWebsite($website);
