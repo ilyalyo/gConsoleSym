@@ -9,6 +9,7 @@ use DateTime;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use Google_Client;
+use Google_Service_Exception;
 use Google_Service_Webmasters;
 use Google_Service_Webmasters_SearchAnalyticsQueryRequest;
 
@@ -117,8 +118,10 @@ class GoogleUtils
                 $em->flush();
             }
         } catch (Exception $e) {
-            if ($e instanceof \Google_Service_Exception) {
-                throw new GoogleUpdateException($e->getMessage());
+            if ($e instanceof Google_Service_Exception) {
+                //User does not have sufficient permission for site
+                if($e->getCode() != 403)
+                    throw new GoogleUpdateException($e->getMessage());
             }
         }
     }
